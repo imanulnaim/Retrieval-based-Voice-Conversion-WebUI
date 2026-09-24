@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ms"><head><meta charset="utf-8"><title>Infak Jumaat Dana PASTI</title>
+<style>
+@font-face{font-family:'Playfair Display';font-weight:700;font-style:normal;src:url(assets/playfairdisplay-700.woff2)}
+@font-face{font-family:'Playfair Display';font-weight:700;font-style:italic;src:url(assets/playfairdisplay-700i.woff2)}
+@font-face{font-family:'Playfair Display';font-weight:900;src:url(assets/playfairdisplay-900.woff2)}
+@font-face{font-family:Poppins;font-weight:400;src:url(assets/poppins-400.woff2)}
+@font-face{font-family:Poppins;font-weight:600;src:url(assets/poppins-600.woff2)}
+@font-face{font-family:Poppins;font-weight:800;src:url(assets/poppins-800.woff2)}
+@font-face{font-family:Amiri;font-weight:700;src:url(assets/amiri-700.woff2)}
+:root{--gold:#f2c14e;--green:#0f5132;--deep:#05261a}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
+body{font-family:Poppins,sans-serif;color:#fff}
+.abs{position:absolute}
+.shot{position:absolute;inset:0;opacity:0;overflow:hidden}
+.ph{position:absolute;inset:-4%;background-size:cover;background-position:center;will-change:transform}
+.grade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,0) 35%,rgba(0,0,0,.25) 60%,rgba(3,25,15,.88) 100%)}
+.warm{position:absolute;inset:0;background:radial-gradient(ellipse at 20% 10%,rgba(255,196,110,.35),transparent 60%);mix-blend-mode:soft-light}
+.cap{position:absolute;left:80px;right:80px;bottom:260px;text-shadow:0 4px 30px rgba(0,0,0,.6)}
+.serif{font-family:'Playfair Display',serif}
+.line{display:block;overflow:hidden}
+.line>span{display:inline-block}
+#leak{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:0;
+  background:radial-gradient(circle at 80% 30%,rgba(255,190,90,.95),rgba(255,120,40,.4) 35%,transparent 65%)}
+#grain{position:absolute;inset:0;opacity:.08;mix-blend-mode:overlay;pointer-events:none}
+.vign{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 50%,rgba(0,0,0,.6) 100%);pointer-events:none}
+#end{background:radial-gradient(ellipse at 50% 30%,#146b45 0%,#0a3d28 45%,#04200f 100%)}
+#endbg{position:absolute;inset:-4%;background:url(assets/group.jpg) center/cover;filter:blur(18px) brightness(.35) saturate(.8);opacity:.55}
+.badge{position:absolute;left:390px;top:230px;width:300px;height:300px;border-radius:50%;background:#fff;
+  box-shadow:0 0 0 10px rgba(242,193,78,.9),0 0 90px rgba(242,193,78,.55);display:flex;align-items:center;justify-content:center}
+.badge img{width:276px;height:276px}
+.bankcard{position:absolute;left:110px;right:110px;top:1090px;border-radius:36px;background:rgba(255,255,255,.96);color:#0b2a1c;
+  padding:40px 40px 36px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.bankcard img{height:92px;border-radius:6px}
+.acct{font-weight:800;font-size:92px;letter-spacing:.04em;line-height:1.05;margin-top:18px}
+.acname{font-weight:600;font-size:44px;letter-spacing:.12em;color:#0f5132}
+.soc{position:absolute;left:0;right:0;top:1610px;display:flex;justify-content:center;gap:50px;font-size:34px;font-weight:600}
+.soc div{display:flex;align-items:center;gap:16px}
+.soc img{width:58px;height:58px;border-radius:12px}
+</style></head><body>
+<div id="root" class="abs" style="inset:0">
+  <div class="shot" id="sh1"><div class="ph" id="p1" style="background-image:url(assets/class.jpg);background-position:62% 50%"></div><div class="warm"></div><div class="grade"></div>
+    <div class="cap"><div class="serif" id="t1" style="font-style:italic;font-size:108px;font-weight:700;line-height:1.05">Setiap<br><span style="color:var(--gold)">Jumaat…</span></div></div></div>
+  <div class="shot" id="sh2"><div class="ph" id="p2" style="background-image:url(assets/table.jpg);background-position:50% 50%"></div><div class="warm"></div><div class="grade"></div>
+    <div class="cap"><div class="serif" id="t2" style="font-style:italic;font-size:100px;font-weight:700;line-height:1.05">infak kecil<br><span style="color:var(--gold)">anda,</span></div></div></div>
+  <div class="shot" id="sh3"><div class="ph" id="p3" style="background-image:url(assets/group.jpg);background-position:48% 60%"></div><div class="warm"></div><div class="grade"></div>
+    <div class="cap"><div id="t3a" style="font-size:44px;font-weight:600;letter-spacing:.2em;opacity:.9">MENYUBURKAN IMAN</div>
+      <div class="serif" id="t3b" style="font-size:118px;font-weight:900;line-height:1.02;margin-top:10px">Tunas-Tunas<br><span style="color:var(--gold)">Islam</span></div></div></div>
+  <div class="shot" id="end"><div id="endbg"></div>
+    <svg class="abs" id="pat" style="inset:0;opacity:.13" width="1080" height="1920"><defs><pattern id="g" width="180" height="180" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#f2c14e" stroke-width="2"><rect x="45" y="45" width="90" height="90"/><rect x="45" y="45" width="90" height="90" transform="rotate(45 90 90)"/><circle cx="90" cy="90" r="30"/><path d="M0 0L45 45M180 0L135 45M0 180L45 135M180 180L135 135"/></g></pattern></defs>
+      <rect width="1080" height="1920" fill="url(#g)"/></svg>
+    <div class="badge" id="badge"><img src="assets/pasti_logo.png" alt=""></div>
+    <div class="abs" id="ar" style="left:0;right:0;top:575px;text-align:center;font-family:Amiri;font-size:64px;color:var(--gold);direction:rtl">صدقة جارية</div>
+    <div class="abs" id="e1" style="left:0;right:0;top:670px;text-align:center;font-size:40px;font-weight:600;letter-spacing:.3em;color:#cfe9d9">INFAK JUMAAT</div>
+    <div class="abs serif" id="e2" style="left:0;right:0;top:720px;text-align:center;font-size:150px;font-weight:900;line-height:1">Dana <span style="color:var(--gold)">PASTI</span></div>
+    <div class="abs serif" id="e3" style="left:0;right:0;top:900px;text-align:center;font-size:52px;font-style:italic;font-weight:700;color:#e8f3ec">Amal jariah yang tak putus</div>
+    <div class="bankcard" id="bank"><img src="assets/bankrakyat.png" alt="Bank Rakyat">
+      <div class="acct">1101676741</div><div class="acname">PASTI AL-MUNIR</div></div>
+    <div class="soc" id="soc"><div><img src="assets/fb.png" alt="">PASTI Al-Munir Bukit Gasing</div></div>
+    <div class="soc" id="soc2" style="top:1700px"><div><img src="assets/tiktok.png" alt="">@pastibukitgasing</div></div>
+  </div>
+  <div id="leak"></div>
+  <canvas id="grain" width="540" height="960" style="width:1080px;height:1920px"></canvas>
+  <div class="vign"></div>
+  <div id="black" class="abs" style="inset:0;background:#000"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const P=(t,a,b)=>clamp((t-a)/(b-a));
+const eO=x=>1-Math.pow(1-x,3), eIO=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eBack=x=>{const c=1.6;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const lerp=(a,b,p)=>a+(b-a)*p;
+function tf(el,{o=1,x=0,y=0,s=1,b=0}){el.style.opacity=o;el.style.transform=`translate(${x}px,${y}px) scale(${s})`;el.style.filter=b>.05?`blur(${b}px)`:''}
+function up(el,t,a,d=.6,dy=50){const p=eO(P(t,a,a+d));tf(el,{o:p,y:dy*(1-p),b:10*(1-p)})}
+const g=$('grain').getContext('2d'),gi=g.createImageData(540,960);let seed=3;const rnd=()=>((seed=(seed*16807)%2147483647)/2147483647);
+function grain(t){seed=3+Math.floor(t*24)*131;for(let i=0;i<gi.data.length;i+=4){const v=rnd()*255;gi.data[i]=gi.data[i+1]=gi.data[i+2]=v;gi.data[i+3]=255}g.putImageData(gi,0,0)}
+// shot windows with 0.35s cross-dissolves
+const shots=[['sh1',0,1.75],['sh2',1.45,3.55],['sh3',3.25,5.75],['end',5.4,10.5]];
+function render(t){
+  grain(t);
+  for(const [id,a,z] of shots){const o=clamp(P(t,a,a+.35))*(1-clamp(P(t,z-.35,z)));$(id).style.opacity=id==='end'?clamp(P(t,a,a+.45)):o}
+  $('black').style.opacity=1-eO(P(t,0,.5)) + eIO(P(t,9.6,10));
+  // Ken Burns
+  tf($('p1'),{s:lerp(1.18,1.06,eIO(P(t,0,1.9))),x:lerp(40,-30,P(t,0,1.9))});
+  tf($('p2'),{s:lerp(1.02,1.16,P(t,1.4,3.6)),y:lerp(0,-40,P(t,1.4,3.6))});
+  tf($('p3'),{s:lerp(1.25,1.08,eIO(P(t,3.2,5.8))),y:lerp(-20,30,P(t,3.2,5.8))});
+  tf($('endbg'),{s:1+.04*P(t,5.4,10)});
+  $('pat').style.transform=`rotate(${t*.6}deg) scale(1.3)`;
+  up($('t1'),t,.35,.7,60); up($('t2'),t,1.75,.6,60); up($('t3a'),t,3.5,.5,30); up($('t3b'),t,3.8,.7,60);
+  // light leaks on transitions
+  let lk=0;for(const c of [1.6,3.4,5.55]){const d=t-c;if(d>-.3&&d<.5)lk=Math.max(lk,Math.sin(Math.PI*clamp((d+.3)/.8))*.75)}
+  $('leak').style.opacity=lk+0.12*Math.sin(t*1.3)**2;
+  // end card
+  const pb=eBack(P(t,5.6,6.3));tf($('badge'),{o:clamp(P(t,5.6,5.9)),s:lerp(.3,1,pb)});
+  $('badge').style.boxShadow=`0 0 0 10px rgba(242,193,78,.9),0 0 ${70+40*Math.sin(t*3)}px rgba(242,193,78,.6)`;
+  up($('ar'),t,6.0,.6,20); up($('e1'),t,6.15,.5,30); up($('e2'),t,6.3,.6,50); up($('e3'),t,7.1,.6,30);
+  const pk=eBack(P(t,7.6,8.2));tf($('bank'),{o:clamp(P(t,7.6,7.85)),y:(1-pk)*120,s:lerp(.9,1,pk)});
+  up($('soc'),t,8.3,.5,30); up($('soc2'),t,8.5,.5,30);
+}
+window.render=render;
+window.ready=Promise.all(['700 10px "Playfair Display"','italic 700 10px "Playfair Display"','900 10px "Playfair Display"','400 10px Poppins','600 10px Poppins','800 10px Poppins','700 10px Amiri'].map(f=>document.fonts.load(f,'صدقة aA'))).then(()=>document.fonts.ready).then(()=>Promise.all(['class','table','group'].map(n=>new Promise(r=>{const i=new Image();i.onload=r;i.src=`assets/${n}.jpg`}))));
+const qs=new URLSearchParams(location.search);
+if(!qs.has('capture')){const st=performance.now();window.ready.then(()=>{(function loop(){render(((performance.now()-st)/1000)%10);requestAnimationFrame(loop)})()})}
+</script></body></html>
