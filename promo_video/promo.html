@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Program AI Bro Aiman</title>
+<style>
+@font-face{font-family:'Orbitron';font-weight:600;src:url(assets/orbitron-600.woff2) format('woff2')}
+@font-face{font-family:'Orbitron';font-weight:800;src:url(assets/orbitron-800.woff2) format('woff2')}
+@font-face{font-family:'Orbitron';font-weight:900;src:url(assets/orbitron-900.woff2) format('woff2')}
+@font-face{font-family:'Poppins';font-weight:400;src:url(assets/poppins-400.woff2) format('woff2')}
+@font-face{font-family:'Poppins';font-weight:600;src:url(assets/poppins-600.woff2) format('woff2')}
+@font-face{font-family:'Poppins';font-weight:700;src:url(assets/poppins-700.woff2) format('woff2')}
+@font-face{font-family:'Poppins';font-weight:800;src:url(assets/poppins-800.woff2) format('woff2')}
+  :root{--cyan:#22d3ee;--violet:#8b5cf6;--pink:#ec4899;--ink:#e8f1ff;--bg:#050816}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
+  body{font-family:Poppins,sans-serif;color:var(--ink)}
+  #stage{position:absolute;inset:0;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,#10193d 0%,#060a1c 55%,#03040c 100%)}
+  canvas#bgc{position:absolute;inset:0}
+  .abs{position:absolute}
+  .center{left:0;right:0;text-align:center}
+  .orb{font-family:Orbitron,sans-serif;letter-spacing:.04em}
+  .grad{background:linear-gradient(90deg,var(--cyan),var(--violet) 55%,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .glow{text-shadow:0 0 24px rgba(34,211,238,.55)}
+  .scene{position:absolute;inset:0;opacity:0}
+  .chip{display:inline-block;padding:14px 34px;border:2px solid rgba(34,211,238,.6);border-radius:60px;background:rgba(10,20,50,.6);font-weight:600;font-size:34px;letter-spacing:.08em}
+  /* avatar */
+  #avatar{position:absolute;width:700px;height:1150px;transform-origin:50% 50%}
+  #avatar img{position:absolute;left:40px;top:0;width:620px;height:990px}
+  #avatar svg{position:absolute;left:0;top:0;overflow:visible}
+  .holo-ring{position:absolute;border-radius:50%;border:3px solid rgba(34,211,238,.5);box-shadow:0 0 40px rgba(34,211,238,.35),inset 0 0 40px rgba(139,92,246,.25)}
+  /* tool cards */
+  .card{position:absolute;width:820px;height:760px;left:130px;top:590px;border-radius:48px;padding:60px 56px;
+        background:linear-gradient(160deg,rgba(22,32,72,.92),rgba(8,12,32,.92));border:2px solid rgba(255,255,255,.12);
+        box-shadow:0 30px 80px rgba(0,0,0,.5);transform-origin:50% 50%;overflow:hidden}
+  .card .icon{width:170px;height:170px;border-radius:44px;display:flex;align-items:center;justify-content:center;margin-bottom:34px}
+  .card h3{font-family:Orbitron,sans-serif;font-size:74px;font-weight:900;line-height:1.05;margin-bottom:12px}
+  .card .tag{font-size:32px;opacity:.75;margin-bottom:38px}
+  .card ul{list-style:none}
+  .card li{font-size:38px;margin:0 0 22px;padding-left:58px;position:relative;font-weight:600}
+  .card li::before{content:"";position:absolute;left:0;top:14px;width:30px;height:30px;border-radius:8px;background:var(--c);box-shadow:0 0 18px var(--c)}
+  .card .edge{position:absolute;left:0;top:0;right:0;height:10px;background:var(--c)}
+  .tile{position:absolute;width:440px;height:300px;border-radius:36px;background:rgba(14,22,54,.85);border:2px solid rgba(34,211,238,.35);
+        display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 0 30px rgba(34,211,238,.15)}
+  .tile .e{font-size:110px;line-height:1;margin-bottom:18px;font-family:"Noto Color Emoji"}
+  .tile .t{font-size:38px;font-weight:700;line-height:1.15}
+  #flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;mix-blend-mode:screen}
+  .btn{display:inline-block;padding:40px 90px;border-radius:100px;font-family:Orbitron,sans-serif;font-weight:900;font-size:66px;color:#04101f;
+       background:linear-gradient(90deg,var(--cyan),#a78bfa,var(--pink));box-shadow:0 0 60px rgba(34,211,238,.6)}
+  .scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 2px,transparent 2px 6px);pointer-events:none}
+  .vign{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 55%,rgba(0,0,0,.65) 100%);pointer-events:none}
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="bgc" width="1080" height="1920"></canvas>
+
+  <!-- S1 hook -->
+  <div class="scene" id="s1">
+    <div class="abs center orb" id="s1a" style="top:780px;font-size:64px;font-weight:800">DUNIA SEDANG<br>BERUBAH…</div>
+    <div class="abs center orb grad" id="s1b" style="top:600px;font-size:380px;font-weight:900;line-height:1">AI</div>
+    <div class="abs center" id="s1c" style="top:1040px;font-size:58px;font-weight:700">Adakah anda <span class="grad">bersedia?</span></div>
+    <div class="abs center" id="s1d" style="top:1160px"><span class="chip">MASA DEPAN BERMULA SEKARANG</span></div>
+  </div>
+
+  <!-- avatar (shared by S2 + S6) -->
+  <div id="avwrap" class="abs" style="left:0;top:0;width:1080px;height:1920px;opacity:0">
+    <div class="holo-ring" id="ring1"></div>
+    <div class="holo-ring" id="ring2" style="border-color:rgba(236,72,153,.45)"></div>
+    <div id="avatar">
+      <svg width="700" height="1150" viewBox="0 0 700 1150">
+        <defs>
+          <linearGradient id="jk" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#1b2553"/><stop offset=".6" stop-color="#0c1230"/><stop offset="1" stop-color="#060918"/>
+          </linearGradient>
+          <linearGradient id="lap" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#24306a"/><stop offset="1" stop-color="#0f1638"/>
+          </linearGradient>
+          <linearGradient id="neon" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#8b5cf6"/>
+          </linearGradient>
+          <filter id="gl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset=".75" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
+          <clipPath id="below"><path d="M-500 1150 L-500 870 L170 870 Q350 905 530 870 L1200 870 L1200 1150 Z"/></clipPath>
+          <mask id="fm"><rect x="-400" y="0" width="1500" height="1150" fill="url(#fade)"/></mask>
+        </defs>
+        <g mask="url(#fm)">
+          <!-- jacket body -->
+          <path d="M-340 1150 L-300 990 Q-240 905 60 880 L200 855 L500 855 L640 880 Q940 905 1000 990 L1040 1150 Z" fill="url(#jk)"/>
+          <!-- inner tee -->
+          <path d="M170 868 Q350 905 530 868 L455 1150 L245 1150 Z" fill="#070a16"/>
+          <path d="M185 875 Q350 910 515 875" stroke="#22d3ee" stroke-width="3" fill="none" opacity=".5"/>
+          <!-- lapels / high collar -->
+          <path d="M128 745 L205 790 L240 905 L345 1150 L220 1150 L110 950 Q95 840 128 745 Z" fill="url(#lap)"/>
+          <path d="M572 745 L495 790 L460 905 L355 1150 L480 1150 L590 950 Q605 840 572 745 Z" fill="url(#lap)"/>
+          <g filter="url(#gl)" stroke="url(#neon)" stroke-width="4" fill="none" class="led">
+            <path d="M205 790 L240 905 L345 1150"/>
+            <path d="M495 790 L460 905 L355 1150"/>
+            <!-- shoulder strips -->
+            <path d="M-270 975 Q-120 905 70 895"/>
+            <path d="M970 975 Q820 905 630 895"/>
+            <!-- circuit traces -->
+            <path d="M40 1150 L40 1060 L120 1010 L165 1010"/>
+            <path d="M-40 1150 L-40 1090 L60 1040"/>
+            <path d="M660 1150 L660 1090 L600 1050"/>
+          </g>
+          <g fill="#22d3ee" filter="url(#gl)">
+            <circle cx="165" cy="1010" r="7"/><circle cx="60" cy="1040" r="7"/><circle cx="600" cy="1050" r="7"/>
+          </g>
+          <!-- chest badge -->
+          <g transform="translate(505 960) rotate(-4)">
+            <rect x="0" y="0" width="210" height="70" rx="14" fill="#0a1024" stroke="#22d3ee" stroke-width="3"/>
+            <rect x="12" y="14" width="42" height="42" rx="8" fill="none" stroke="#ec4899" stroke-width="3"/>
+            <rect x="24" y="26" width="18" height="18" rx="3" fill="#ec4899"/>
+            <text x="66" y="46" font-family="Orbitron" font-weight="900" font-size="25" fill="#e8f1ff">AI TRAINER</text>
+          </g>
+        </g>
+      </svg>
+      <img src="assets/bro_aiman_head.png" alt="">
+      <svg width="700" height="1150" viewBox="0 0 700 1150">
+        <g mask="url(#fm)" clip-path="url(#below)">
+          <!-- jacket body -->
+          <path d="M-340 1150 L-300 990 Q-240 905 60 880 L200 855 L500 855 L640 880 Q940 905 1000 990 L1040 1150 Z" fill="url(#jk)"/>
+          <!-- inner tee -->
+          <path d="M170 868 Q350 905 530 868 L455 1150 L245 1150 Z" fill="#070a16"/>
+          <path d="M185 875 Q350 910 515 875" stroke="#22d3ee" stroke-width="3" fill="none" opacity=".5"/>
+          <!-- lapels / high collar -->
+          <path d="M128 745 L205 790 L240 905 L345 1150 L220 1150 L110 950 Q95 840 128 745 Z" fill="url(#lap)"/>
+          <path d="M572 745 L495 790 L460 905 L355 1150 L480 1150 L590 950 Q605 840 572 745 Z" fill="url(#lap)"/>
+          <g filter="url(#gl)" stroke="url(#neon)" stroke-width="4" fill="none" class="led">
+            <path d="M205 790 L240 905 L345 1150"/>
+            <path d="M495 790 L460 905 L355 1150"/>
+            <!-- shoulder strips -->
+            <path d="M-270 975 Q-120 905 70 895"/>
+            <path d="M970 975 Q820 905 630 895"/>
+            <!-- circuit traces -->
+            <path d="M40 1150 L40 1060 L120 1010 L165 1010"/>
+            <path d="M-40 1150 L-40 1090 L60 1040"/>
+            <path d="M660 1150 L660 1090 L600 1050"/>
+          </g>
+          <g fill="#22d3ee" filter="url(#gl)">
+            <circle cx="165" cy="1010" r="7"/><circle cx="60" cy="1040" r="7"/><circle cx="600" cy="1050" r="7"/>
+          </g>
+          <!-- chest badge -->
+          <g transform="translate(505 960) rotate(-4)">
+            <rect x="0" y="0" width="210" height="70" rx="14" fill="#0a1024" stroke="#22d3ee" stroke-width="3"/>
+            <rect x="12" y="14" width="42" height="42" rx="8" fill="none" stroke="#ec4899" stroke-width="3"/>
+            <rect x="24" y="26" width="18" height="18" rx="3" fill="#ec4899"/>
+            <text x="66" y="46" font-family="Orbitron" font-weight="900" font-size="25" fill="#e8f1ff">AI TRAINER</text>
+          </g>
+        </g>
+      </svg>
+      <svg width="700" height="1150" viewBox="0 0 700 1150">
+        <!-- headset -->
+        <path d="M68 440 C40 -125 660 -125 632 440" stroke="#111a3a" stroke-width="26" fill="none" stroke-linecap="round"/>
+        <path d="M68 440 C40 -125 660 -125 632 440" stroke="url(#neon)" stroke-width="5" fill="none" opacity=".9" filter="url(#gl)"/>
+        <path d="M60 510 Q95 700 250 668" stroke="#1a2348" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <path d="M60 510 Q95 700 250 668" stroke="#22d3ee" stroke-width="3" fill="none" opacity=".8"/>
+        <rect x="236" y="652" width="44" height="30" rx="14" fill="#0b1026" stroke="#22d3ee" stroke-width="3"/>
+        <ellipse cx="64" cy="465" rx="46" ry="72" fill="#0d1432" stroke="#22d3ee" stroke-width="4"/>
+        <ellipse cx="64" cy="465" rx="20" ry="36" fill="#22d3ee" filter="url(#gl)" class="pulse"/>
+        <ellipse cx="636" cy="465" rx="46" ry="72" fill="#0d1432" stroke="#8b5cf6" stroke-width="4"/>
+        <ellipse cx="636" cy="465" rx="20" ry="36" fill="#8b5cf6" filter="url(#gl)" class="pulse"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- S2 intro trainer -->
+  <div class="scene" id="s2">
+    <div class="abs center" id="s2a" style="top:150px"><span class="chip">KENALI JURULATIH ANDA</span></div>
+    <div class="abs center orb grad glow" id="s2b" style="top:1400px;font-size:132px;font-weight:900">BRO AIMAN</div>
+    <div class="abs center" id="s2c" style="top:1580px;font-size:44px;font-weight:600">AI Trainer &nbsp;•&nbsp; Pencipta Kandungan AI</div>
+    <div class="abs center" id="s2d" style="top:1670px;font-size:36px;opacity:.8">Belajar terus secara praktikal bersama pakar</div>
+  </div>
+
+  <!-- S3 program title -->
+  <div class="scene" id="s3">
+    <div class="abs center" id="s3a" style="top:470px"><span class="chip">PROGRAM LATIHAN</span></div>
+    <div class="abs center orb" id="s3b" style="top:640px;font-size:96px;font-weight:900;line-height:1.12">KEMAHIRAN<br><span class="grad">MENGHASILKAN</span><br>BAHAN AI</div>
+    <div class="abs" id="s3line" style="top:1060px;left:190px;width:700px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink))"></div>
+    <div class="abs center" id="s3c" style="top:1120px;font-size:50px;font-weight:600">Dari <span class="grad" style="font-weight:800">idea</span> ➜ kandungan <span class="grad" style="font-weight:800">siap guna</span></div>
+    <div class="abs center" id="s3d" style="top:1210px;font-size:40px;opacity:.8">dalam masa beberapa minit sahaja</div>
+  </div>
+
+  <!-- S4 tools -->
+  <div class="scene" id="s4">
+    <div class="abs center orb" id="s4t" style="top:200px;font-size:70px;font-weight:900;line-height:1.15">KUASAI <span class="grad">ALATAN AI</span><br>TERKINI</div>
+    <div class="card" id="c0" style="--c:#10b981">
+      <div class="edge"></div>
+      <div class="icon" style="background:linear-gradient(135deg,#10b981,#065f46)">
+        <svg width="110" height="110" viewBox="0 0 100 100"><path d="M15 20h70a8 8 0 0 1 8 8v36a8 8 0 0 1-8 8H45L25 88V72H15a8 8 0 0 1-8-8V28a8 8 0 0 1 8-8z" fill="#fff"/><circle cx="32" cy="46" r="6" fill="#065f46"/><circle cx="50" cy="46" r="6" fill="#065f46"/><circle cx="68" cy="46" r="6" fill="#065f46"/></svg>
+      </div>
+      <h3>ChatGPT</h3><div class="tag">Pembantu penulisan & idea</div>
+      <ul><li>Skrip video & kapsyen</li><li>E-book, modul & artikel</li><li>Prompt power untuk semua AI</li></ul>
+    </div>
+    <div class="card" id="c1" style="--c:#60a5fa">
+      <div class="edge"></div>
+      <div class="icon" style="background:linear-gradient(135deg,#3b82f6,#a855f7)">
+        <svg width="120" height="120" viewBox="0 0 100 100"><path d="M50 5 C54 35 65 46 95 50 C65 54 54 65 50 95 C46 65 35 54 5 50 C35 46 46 35 50 5Z" fill="#fff"/></svg>
+      </div>
+      <h3>Gemini</h3><div class="tag">AI pintar serba boleh</div>
+      <ul><li>Kajian & rangka kandungan</li><li>Jana & sunting imej</li><li>Analisis & ringkasan pantas</li></ul>
+    </div>
+    <div class="card" id="c2" style="--c:#f472b6">
+      <div class="edge"></div>
+      <div class="icon" style="background:linear-gradient(135deg,#ec4899,#f59e0b)">
+        <svg width="110" height="110" viewBox="0 0 100 100"><rect x="8" y="24" width="84" height="62" rx="10" fill="#fff"/><path d="M8 24 L92 24 L88 10 L12 10Z" fill="#fff" opacity=".7"/><path d="M42 42 L66 55 L42 68Z" fill="#be185d"/></svg>
+      </div>
+      <h3>Flow AI</h3><div class="tag">Studio video sinematik AI</div>
+      <ul><li>Video iklan dari teks</li><li>Babak sinematik & animasi</li><li>Konten viral tanpa kamera</li></ul>
+    </div>
+    <div class="card" id="c3" style="--c:#a78bfa">
+      <div class="edge"></div>
+      <div class="icon" style="background:linear-gradient(135deg,#8b5cf6,#22d3ee)">
+        <svg width="110" height="110" viewBox="0 0 100 100"><g fill="#fff"><rect x="8" y="8" width="36" height="36" rx="9"/><rect x="56" y="8" width="36" height="36" rx="9"/><rect x="8" y="56" width="36" height="36" rx="9"/><path d="M74 58v32M58 74h32" stroke="#fff" stroke-width="10" stroke-linecap="round"/></g></svg>
+      </div>
+      <h3>&amp; Lain-lain</h3><div class="tag">Alatan AI kreatif pilihan</div>
+      <ul><li>Suara & avatar AI</li><li>Muzik & grafik AI</li><li>Automasi kerja harian</li></ul>
+    </div>
+  </div>
+
+  <!-- S5 outputs -->
+  <div class="scene" id="s5">
+    <div class="abs center orb" id="s5t" style="top:170px;font-size:66px;font-weight:900;line-height:1.15">APA YANG ANDA<br><span class="grad">AKAN HASILKAN</span></div>
+    <div class="tile" id="t0"><div class="e">🎨</div><div class="t">Poster &amp;<br>Grafik</div></div>
+    <div class="tile" id="t1"><div class="e">🎬</div><div class="t">Video<br>Iklan AI</div></div>
+    <div class="tile" id="t2"><div class="e">✍️</div><div class="t">Skrip &amp;<br>Kapsyen</div></div>
+    <div class="tile" id="t3"><div class="e">📘</div><div class="t">E-book &amp;<br>Modul</div></div>
+    <div class="tile" id="t4"><div class="e">🎙️</div><div class="t">Suara &amp;<br>Avatar AI</div></div>
+    <div class="tile" id="t5"><div class="e">📱</div><div class="t">Konten<br>Media Sosial</div></div>
+    <div class="abs center" id="s5b" style="top:1640px;font-size:42px;font-weight:600">Praktikal • Langkah demi langkah • <span class="grad" style="font-weight:800">Hands-on</span></div>
+  </div>
+
+  <!-- S6 CTA -->
+  <div class="scene" id="s6">
+    <div class="abs center orb" id="s6a" style="top:1050px;font-size:54px;font-weight:800;line-height:1.25">SERTAI PROGRAM<br>BERSAMA <span class="grad">BRO AIMAN</span></div>
+    <div class="abs center" id="s6b" style="top:1270px"><span class="btn">DAFTAR SEKARANG</span></div>
+    <div class="abs center" id="s6c" style="top:1480px;font-size:46px;font-weight:700;color:#fbbf24">⚡ Tempat adalah terhad!</div>
+    <div class="abs center" id="s6d" style="top:1570px;font-size:38px;opacity:.85">Hubungi kami atau klik pautan di bio</div>
+  </div>
+
+  <div class="scan"></div>
+  <div class="vign"></div>
+  <div id="flash"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const prog=(t,a,b)=>clamp((t-a)/(b-a));
+const eOut=x=>1-Math.pow(1-x,3);
+const eIn=x=>x*x*x;
+const eInOut=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eBack=x=>{const c=1.70158,c3=c+1;return 1+c3*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const lerp=(a,b,p)=>a+(b-a)*p;
+
+// deterministic PRNG
+let seed=7;const rnd=()=>((seed=(seed*16807)%2147483647)/2147483647);
+const nodes=[...Array(70)].map(()=>({x:rnd()*1080,y:rnd()*1920,vx:(rnd()-.5)*30,vy:(rnd()-.5)*30,p:rnd()*6.28}));
+const parts=[...Array(120)].map(()=>({x:rnd()*1080,y:rnd()*1920,s:1+rnd()*3,v:20+rnd()*60,p:rnd()*6.28}));
+const cv=$('bgc'),cx=cv.getContext('2d');
+
+function drawBG(t){
+  cx.clearRect(0,0,1080,1920);
+  // perspective grid floor
+  cx.save();
+  const hz=1250;cx.strokeStyle='rgba(139,92,246,0.28)';cx.lineWidth=2;
+  for(let i=-12;i<=12;i++){cx.beginPath();cx.moveTo(540+i*20,hz);cx.lineTo(540+i*260,1920);cx.stroke();}
+  const off=(t*0.6)%1;
+  for(let k=0;k<14;k++){const z=(k+off)/14;const y=hz+Math.pow(z,2.2)*(1920-hz);cx.globalAlpha=z;cx.beginPath();cx.moveTo(0,y);cx.lineTo(1080,y);cx.stroke();}
+  cx.globalAlpha=1;
+  const g=cx.createLinearGradient(0,hz-60,0,hz+80);g.addColorStop(0,'rgba(34,211,238,0)');g.addColorStop(.5,'rgba(34,211,238,.25)');g.addColorStop(1,'rgba(34,211,238,0)');
+  cx.fillStyle=g;cx.fillRect(0,hz-60,1080,140);
+  cx.restore();
+  // neural net
+  const P=nodes.map(n=>{let x=(n.x+n.vx*t)%1080,y=(n.y+n.vy*t)%1920;if(x<0)x+=1080;if(y<0)y+=1920;return[x,y,n.p]});
+  cx.lineWidth=1.4;
+  for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){
+    const dx=P[i][0]-P[j][0],dy=P[i][1]-P[j][1],d=Math.hypot(dx,dy);
+    if(d<210){cx.strokeStyle=`rgba(34,211,238,${(1-d/210)*0.35})`;cx.beginPath();cx.moveTo(P[i][0],P[i][1]);cx.lineTo(P[j][0],P[j][1]);cx.stroke();}
+  }
+  for(const [x,y,p] of P){const a=.5+.5*Math.sin(t*3+p);cx.fillStyle=`rgba(167,139,250,${.4+.5*a})`;cx.beginPath();cx.arc(x,y,3+2*a,0,7);cx.fill();}
+  for(const q of parts){let y=(q.y-q.v*t)%1920;if(y<0)y+=1920;cx.fillStyle=`rgba(255,255,255,${.25+.25*Math.sin(t*2+q.p)})`;cx.fillRect(q.x,y,q.s,q.s);}
+}
+
+function set(el,{o=1,x=0,y=0,s=1,r=0,b=0}={}){
+  el.style.opacity=o;el.style.transform=`translate(${x}px,${y}px) scale(${s}) rotate(${r}deg)`;el.style.filter=b>0.05?`blur(${b}px)`:'none';
+}
+// generic in/out: element enters over [a,a+d] from offset, exits over [z-d2,z]
+function io(el,t,a,z,{d=.6,dy=60,dx=0,s0=1,d2=.4,b0=12}={}){
+  const pi=eOut(prog(t,a,a+d)),po=eIn(prog(t,z-d2,z));
+  set(el,{o:pi*(1-po),x:dx*(1-pi),y:dy*(1-pi)-40*po,s:lerp(s0,1,pi),b:b0*(1-pi)+8*po});
+}
+function scene(id,t,a,z){$(id).style.opacity=(t>=a&&t<z)?1:0;}
+
+function render(t){
+  drawBG(t);
+  // ---------- S1 0-6
+  scene('s1',t,0,6.2);
+  io($('s1a'),t,0.2,2.6,{dy:0,s0:1.4,b0:20});
+  const pb=prog(t,2.6,3.2);
+  const glitch=(t>2.6&&t<3.4)?Math.sin(t*120)*18*(1-prog(t,2.6,3.4)):0;
+  set($('s1b'),{o:eOut(pb)*(1-prog(t,5.6,6.1)),s:lerp(3,1,eOut(pb))*(1+0.02*Math.sin(t*4)),x:glitch,b:20*(1-pb)});
+  $('s1b').style.textShadow=`${-glitch}px 0 rgba(236,72,153,.8), ${glitch}px 0 rgba(34,211,238,.8), 0 0 60px rgba(139,92,246,.6)`;
+  io($('s1c'),t,3.4,6.1);
+  io($('s1d'),t,4.1,6.1,{dy:0,s0:.6});
+
+  // ---------- avatar
+  const av=$('avatar'),aw=$('avwrap');
+  let avO=0,ax=190,ay=260,as=1;
+  if(t>=6&&t<14.2){
+    const p=eOut(prog(t,6.3,7.6));avO=p*(1-prog(t,13.6,14.2));
+    ax=190;ay=lerp(420,260,p);as=lerp(.7,.95,p)+0.01*Math.sin(t*2);
+    ay+=Math.sin(t*1.6)*8;
+  }else if(t>=50){
+    const p=eOut(prog(t,50,51.2));avO=p;
+    ax=265;ay=lerp(-100,-40,p)+Math.sin(t*1.6)*6;as=.8;
+  }
+  aw.style.opacity=avO;
+  // hologram reveal: clip from top
+  const rev=t<14.5?eInOut(prog(t,6.3,8)):eInOut(prog(t,50,51.4));
+  av.style.clipPath=`inset(-200px -500px ${(1-rev)*100}% -500px)`;
+  av.style.left=ax+'px';av.style.top=ay+'px';av.style.transform=`scale(${as})`;
+  const cxr=ax+350,cyr=ay+460*as+ (1-as)*575;
+  [['ring1',620,1],['ring2',720,-1]].forEach(([id,R,dir])=>{const e=$(id),rr=R*as*(1+0.03*Math.sin(t*2*dir));
+    e.style.width=rr+'px';e.style.height=rr*0.28+'px';e.style.left=(cxr-rr/2)+'px';e.style.top=(ay+(1150*as)+(1-as)*575-rr*0.14-60)+'px';
+    e.style.transform=`rotate(${dir*Math.sin(t)*3}deg)`;});
+  document.querySelectorAll('.pulse').forEach(e=>e.style.opacity=.55+.45*Math.sin(t*5));
+  // scan line on reveal
+  // ---------- S2 6-14
+  scene('s2',t,6,14.2);
+  io($('s2a'),t,6.4,14,{dy:-40});
+  const pn=prog(t,8,8.8);
+  set($('s2b'),{o:eOut(pn)*(1-prog(t,13.6,14)),s:lerp(1.6,1,eOut(pn)),b:14*(1-pn),y:0});
+  $('s2b').style.letterSpacing=lerp(.4,.04,eOut(pn))+'em';
+  io($('s2c'),t,9,14);
+  io($('s2d'),t,9.8,14);
+
+  // ---------- S3 14-20
+  scene('s3',t,14,20.2);
+  io($('s3a'),t,14.3,20,{dy:-40});
+  io($('s3b'),t,14.6,20,{dy:0,s0:.7,b0:18});
+  const pl=eInOut(prog(t,15.4,16.4));$('s3line').style.transform=`scaleX(${pl})`;$('s3line').style.opacity=1-prog(t,19.6,20);
+  io($('s3c'),t,16.2,20);
+  io($('s3d'),t,16.9,20);
+
+  // ---------- S4 20-38
+  scene('s4',t,20,38.2);
+  io($('s4t'),t,20.2,38,{dy:-50});
+  const slots=[[70,560],[550,560],[70,1000],[550,1000]];
+  for(let i=0;i<4;i++){
+    const el=$('c'+i),t0=21+i*4;
+    if(t<t0){el.style.opacity=0;continue;}
+    const pin=eBack(prog(t,t0,t0+.7));
+    const pm=eInOut(prog(t,t0+3.2,t0+4));
+    const sc=lerp(lerp(.3,1,pin),.52,pm);
+    // card center big: (540,970); slot centers
+    const tx=lerp(540,slots[i][0]+213,pm),ty=lerp(970,slots[i][1]+198,pm);
+    const out=prog(t,37.4,38);
+    el.style.opacity=clamp(prog(t,t0,t0+.3))*(1-out);
+    el.style.left=(tx-410)+'px';el.style.top=(ty-380)+'px';
+    el.style.transform=`scale(${sc}) rotateY(${(1-clamp(pin))*60}deg)`;
+    el.querySelector('ul').style.opacity=1-pm;
+    el.querySelectorAll('li').forEach((li,k)=>{const q=eOut(prog(t,t0+.8+k*.35,t0+1.3+k*.35));li.style.opacity=q;li.style.transform=`translateX(${(1-q)*60}px)`});
+    el.style.boxShadow=`0 30px 80px rgba(0,0,0,.5), 0 0 ${40+30*Math.sin(t*4)}px color-mix(in srgb, var(--c) 45%, transparent)`;
+  }
+
+  // ---------- S5 38-50
+  scene('s5',t,38,50.2);
+  io($('s5t'),t,38.2,50,{dy:-50});
+  for(let i=0;i<6;i++){
+    const el=$('t'+i),c=i%2,r=Math.floor(i/2);
+    const x=80+c*480,y=520+r*350,t0=39.2+i*.9;
+    const p=eBack(prog(t,t0,t0+.6)),o=clamp(prog(t,t0,t0+.25))*(1-prog(t,49.5,50));
+    el.style.left=x+'px';el.style.top=(y+Math.sin(t*2+i)*6)+'px';el.style.opacity=o;el.style.transform=`scale(${lerp(.2,1,p)})`;
+    const lit=prog(t,t0+.4,t0+.8)*(1-prog(t,t0+.8,t0+2));
+    el.style.borderColor=`rgba(34,211,238,${.35+.6*lit})`;el.style.boxShadow=`0 0 ${30+60*lit}px rgba(34,211,238,${.15+.4*lit})`;
+  }
+  io($('s5b'),t,45,50);
+
+  // ---------- S6 50-60
+  scene('s6',t,50,60.1);
+  io($('s6a'),t,50.8,60.5,{dy:40});
+  const pbn=eBack(prog(t,51.8,52.5));
+  set($('s6b'),{o:clamp(prog(t,51.8,52.1)),s:lerp(.3,1,pbn)*(1+.04*Math.sin(t*6)),y:0});
+  io($('s6c'),t,53,60.5);
+  io($('s6d'),t,53.7,60.5);
+  // final fade to black
+  $('stage').style.filter=`brightness(${1-prog(t,59.2,60)})`;
+
+  // flashes at cuts
+  const cuts=[2.6,6.2,14.2,20.2,38.2,50.1];
+  let f=0;for(const c of cuts){const d=t-c;if(d>=-.08&&d<.35)f=Math.max(f,d<0?(d+.08)/.08*.6:.6*(1-d/.35));}
+  $('flash').style.opacity=f;
+}
+window.render=render;
+window.ready=Promise.all(['900 10px Orbitron','800 10px Orbitron','600 10px Orbitron','400 10px Poppins','600 10px Poppins','700 10px Poppins','800 10px Poppins'].map(f=>document.fonts.load(f))).then(()=>document.fonts.ready).then(()=>Promise.all([...document.images].map(i=>i.complete?1:new Promise(r=>i.onload=r))));
+const qs=new URLSearchParams(location.search);
+if(qs.has('t'))window.ready.then(()=>render(+qs.get('t')));
+else if(!qs.has('capture')){const st=performance.now();(function loop(){render(((performance.now()-st)/1000)%60);requestAnimationFrame(loop)})();}
+</script>
+</body>
+</html>
