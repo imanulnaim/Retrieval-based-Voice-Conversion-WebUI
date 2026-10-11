@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bela Bangsa: Di Mana Batasnya?</title>
+<style>
+:root{
+  --ivory:#FAF6EC; --ink:#2A2A2A; --ink2:#5E5A52; --blue:#2B6CB0; --orange:#C9661A;
+  --paper:#FFFFFF; --ui-bg:#1c1c1f; --ui-panel:#26262a; --ui-fg:#f1f1f1; --ui-mute:#a9a9ad;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#2e2e33;color:var(--ui-fg);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.app{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:20px;padding:16px}
+.viewport{position:relative;flex:none;box-shadow:0 10px 40px rgba(0,0,0,.45);border-radius:6px;overflow:hidden}
+
+/* ---------- KOMPOSISI 1080×1920 ---------- */
+#stage{position:absolute;left:0;top:0;width:1080px;height:1920px;background:var(--ivory);
+  transform-origin:0 0;overflow:hidden;color:var(--ink);
+  font-family:"Inter","Helvetica Neue",Helvetica,Arial,sans-serif}
+#gfx{position:absolute;inset:0;width:1080px;height:1920px}
+.el{position:absolute;left:0;top:0;opacity:0;visibility:hidden;will-change:transform,opacity}
+.card{background:var(--paper);border:5px solid var(--ink);border-radius:22px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;font-weight:800;line-height:1.08;padding:16px 22px}
+.card.blue{border-color:var(--blue);color:var(--blue)}
+.card.orange{border-color:var(--orange);color:var(--orange)}
+.card small{display:block;font-size:22px;letter-spacing:.16em;font-weight:700;color:var(--ink2);margin-bottom:8px}
+.pill{display:inline-block;font-size:23px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  padding:7px 18px;border-radius:999px;border:3px solid currentColor;line-height:1.15;text-align:center}
+.pill.ink{color:var(--ink2)} .pill.orange{color:var(--orange)} .pill.blue{color:var(--blue)}
+.center{text-align:center}
+.ref{background:var(--paper);border-left:8px solid var(--blue);border-radius:10px;padding:16px 26px;text-align:left;
+  box-shadow:0 2px 0 rgba(0,0,0,.06)}
+.ref b{display:block;font-size:38px;font-weight:800;color:var(--ink)}
+.ref i{display:block;font-size:24px;color:var(--ink2);margin-top:4px}
+#title{font-size:84px;font-weight:800;line-height:1.05;text-align:center;width:960px;letter-spacing:-.01em}
+#title span{color:var(--ink2);font-weight:700}
+#chapter{font-size:28px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink2);white-space:nowrap}
+.lead{font-size:42px;font-weight:700;line-height:1.2;text-align:center;width:900px}
+.lead em{font-style:normal;color:var(--blue)}
+.big{font-size:92px;font-weight:800;letter-spacing:.02em;color:var(--blue);white-space:nowrap}
+.big span{display:inline-block}
+.stance{width:900px;background:var(--paper);border:5px solid var(--ink);border-radius:24px;overflow:hidden;text-align:center}
+.stance .band{background:var(--ink);color:#fff;font-size:32px;font-weight:800;letter-spacing:.2em;padding:18px 0}
+.stance .body{font-size:50px;font-weight:800;line-height:1.16;padding:34px 46px 18px}
+.stance .foot{font-size:25px;color:var(--ink2);padding:0 40px 28px}
+.hypo{width:900px;background:var(--paper);border:5px dashed var(--ink2);border-radius:24px;text-align:center;padding:26px 40px 34px}
+.hypo .band{font-size:30px;font-weight:800;letter-spacing:.22em;color:var(--ink2);margin-bottom:18px}
+.hypo .body{font-size:46px;font-weight:800;line-height:1.18}
+.row{width:900px;height:108px;display:flex;align-items:center;gap:26px;border-bottom:3px solid #DDD5C3;padding:0 100px 0 6px}
+.row .n{flex:none;width:62px;height:62px;border-radius:50%;border:4px solid var(--blue);color:var(--blue);
+  font-size:32px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.row .q{font-size:40px;font-weight:700;line-height:1.1}
+.chip{width:760px;height:112px;border-radius:999px;border:5px solid;display:flex;align-items:center;justify-content:center;
+  font-size:42px;font-weight:800;letter-spacing:.04em;background:var(--paper)}
+.chip.blue{border-color:var(--blue);color:var(--blue)} .chip.orange{border-color:var(--orange);color:var(--orange)}
+.word{font-size:48px;font-weight:800;letter-spacing:.04em;white-space:nowrap}
+.note{width:880px;border:3px solid var(--ink);border-radius:16px;padding:24px 30px;text-align:center;
+  font-size:36px;font-weight:700;line-height:1.25;background:var(--paper)}
+.muted{font-size:32px;color:var(--ink2);text-align:center;width:900px;line-height:1.25}
+
+/* Sari kata: berkontras tinggi, maksimum dua baris */
+#sub{position:absolute;left:72px;right:72px;bottom:190px;display:flex;justify-content:center;pointer-events:none}
+#subText{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
+  width:fit-content;max-width:100%;background:rgba(16,16,16,.92);color:#fff;font-size:40px;font-weight:600;
+  line-height:1.3;padding:14px 28px;border-radius:14px;text-align:center;opacity:0}
+#safe{position:absolute;left:72px;right:72px;top:110px;bottom:140px;border:3px dashed rgba(220,40,40,.7);
+  pointer-events:none;display:none}
+#safe::after{content:"Margin selamat teks (72px sisi · 110px atas · 140px bawah)";position:absolute;top:6px;left:10px;
+  font:600 22px system-ui,sans-serif;color:rgba(200,30,30,.85)}
+.show-safe #safe{display:block}
+.no-subs #sub{display:none}
+
+/* ---------- PANEL KAWALAN (di luar komposisi) ---------- */
+.panel{width:380px;max-width:100%;background:var(--ui-panel);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.panel h1{font-size:17px;margin:0;font-weight:700}
+.panel p{margin:0;font-size:13px;line-height:1.45;color:var(--ui-mute)}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+button,.filebtn{appearance:none;border:1px solid #44444a;background:#34343a;color:var(--ui-fg);border-radius:8px;
+  padding:9px 14px;font:600 14px system-ui,sans-serif;cursor:pointer}
+button:hover,.filebtn:hover{background:#3e3e45}
+button.primary{background:#2B6CB0;border-color:#2B6CB0;min-width:96px}
+input[type=range]{width:100%;accent-color:#2B6CB0}
+.time{font:600 14px ui-monospace,SFMono-Regular,Menlo,monospace;display:flex;justify-content:space-between;color:var(--ui-mute)}
+.warn{background:#3a2d1c;border:1px solid #6b4a1f;color:#f3d3a5;border-radius:8px;padding:10px 12px;font-size:13px;line-height:1.4}
+.toggles{display:flex;gap:16px;flex-wrap:wrap;font-size:13px}
+.jump{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.jump button{padding:6px 4px;font-size:12px}
+details{font-size:13px}
+summary{cursor:pointer;font-weight:700}
+table{width:100%;border-collapse:collapse;margin-top:8px;font-size:12px}
+td{border-top:1px solid #3b3b41;padding:5px 4px;vertical-align:top;color:#d6d6da}
+td:first-child{white-space:nowrap;font-family:ui-monospace,Menlo,monospace;color:var(--ui-mute)}
+tr.on td{background:#2f3b4d}
+.filebtn input{display:none}
+
+/* Mod eksport: hanya komposisi, skala 1:1 */
+.export body,.export html{background:var(--ivory)}
+.export .app{padding:0;display:block}
+.export .panel{display:none}
+.export .viewport{box-shadow:none;border-radius:0}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="viewport" id="viewport">
+    <div id="stage" aria-label="Komposisi video 9:16">
+      <svg id="gfx" viewBox="0 0 1080 1920" aria-hidden="true">
+        <defs>
+          <style>
+            .ln{fill:none;stroke-linecap:round;stroke-linejoin:round}
+            .lab{font:700 30px "Inter","Helvetica Neue",Helvetica,Arial,sans-serif;letter-spacing:4px;fill:#5E5A52;text-anchor:middle}
+          </style>
+        </defs>
+        <!-- Babak 1: tanda soal (menjadi titik benih babak 2) -->
+        <circle id="qc" cx="540" cy="820" r="56" fill="#fff" stroke="#2A2A2A" stroke-width="5" opacity="0"/>
+        <text id="qt" x="540" y="846" text-anchor="middle" font-size="76" font-weight="800" fill="#2A2A2A" opacity="0"
+          font-family="Inter,Helvetica Neue,Helvetica,Arial,sans-serif">?</text>
+        <!-- Babak 2–3: komuniti (dijana JS) -->
+        <g id="communities"></g>
+        <!-- Babak 3: garis penghubung -->
+        <path id="lAB" class="ln" d="M312,820 L428,820" stroke="#2B6CB0" stroke-width="6" opacity="0"/>
+        <path id="lBC" class="ln" d="M652,820 L768,820" stroke="#2B6CB0" stroke-width="6" opacity="0"/>
+        <path id="lAC" class="ln" d="M200,708 Q540,540 880,708" stroke="#2B6CB0" stroke-width="6" opacity="0"/>
+        <!-- Babak 4: neraca -->
+        <g id="balance">
+          <rect id="bBase" x="420" y="1128" width="240" height="24" rx="12" fill="#2A2A2A" opacity="0"/>
+          <path id="bPillar" class="ln" d="M540,770 L540,1130" stroke="#2A2A2A" stroke-width="9" opacity="0"/>
+          <path id="bStrings" class="ln" d="" stroke="#5E5A52" stroke-width="3" opacity="0"/>
+          <path id="bPans" class="ln" d="" stroke="#2A2A2A" stroke-width="6" opacity="0"/>
+          <line id="beam" class="ln" x1="312" y1="820" x2="768" y2="820" stroke="#2A2A2A" stroke-width="9" opacity="0"/>
+          <polygon id="bPivot" points="540,748 518,786 562,786" fill="#2A2A2A" opacity="0"/>
+        </g>
+        <!-- Babak 5: garis bergabung -->
+        <path id="cv1" class="ln" d="M220,718 C220,800 540,780 540,862" stroke="#2B6CB0" stroke-width="5" opacity="0"/>
+        <path id="cv2" class="ln" d="M540,718 L540,862" stroke="#2B6CB0" stroke-width="5" opacity="0"/>
+        <path id="cv3" class="ln" d="M860,718 C860,800 540,780 540,862" stroke="#2B6CB0" stroke-width="5" opacity="0"/>
+        <!-- Babak 6: dokumen bercabang -->
+        <g id="doc" opacity="0">
+          <path d="M-75,-95 H45 L75,-65 V95 H-75 Z" fill="#fff" stroke="#2A2A2A" stroke-width="5" stroke-linejoin="round"/>
+          <path d="M45,-95 V-65 H75" fill="none" stroke="#2A2A2A" stroke-width="5" stroke-linejoin="round"/>
+          <path class="ln" d="M-48,-40 H40 M-48,-8 H48 M-48,24 H48 M-48,56 H18" stroke="#5E5A52" stroke-width="7"/>
+        </g>
+        <path id="br1" class="ln" d="M540,660 V740 H220 V878" stroke="#2A2A2A" stroke-width="5" opacity="0"/>
+        <path id="br2" class="ln" d="M540,660 V878" stroke="#2A2A2A" stroke-width="5" opacity="0"/>
+        <path id="br3" class="ln" d="M540,660 V740 H860 V878" stroke="#2A2A2A" stroke-width="5" opacity="0"/>
+        <!-- Ikon semakan sumber (kanta) -->
+        <g id="mg2" opacity="0"><circle r="30" fill="#fff" stroke="#C9661A" stroke-width="7"/><path class="ln" d="M22,22 L46,46" stroke="#C9661A" stroke-width="9"/></g>
+        <g id="mg3" opacity="0"><circle r="30" fill="#fff" stroke="#C9661A" stroke-width="7"/><path class="ln" d="M22,22 L46,46" stroke="#C9661A" stroke-width="9"/></g>
+        <!-- Babak 7–8: kotak semak menjadi garis bawah -->
+        <rect id="cb1" fill="#2A2A2A" stroke="#2A2A2A" stroke-width="4" rx="6" opacity="0"/>
+        <rect id="cb2" fill="#2A2A2A" stroke="#2A2A2A" stroke-width="4" rx="6" opacity="0"/>
+        <rect id="cb3" fill="#2A2A2A" stroke="#2A2A2A" stroke-width="4" rx="6" opacity="0"/>
+      </svg>
+
+      <!-- Lapisan teks -->
+      <div id="title" class="el">Bela Bangsa:<br><span>Di Mana Batasnya?</span></div>
+      <div id="chapter" class="el"></div>
+
+      <!-- Babak 1 -->
+      <div id="cardA" class="el card blue" style="width:360px;height:200px;font-size:54px">BELA<br>BANGSA</div>
+      <div id="cardB" class="el card orange" style="width:360px;height:200px;font-size:46px">PERKAUMAN</div>
+      <div id="s1stance" class="el center" style="width:900px">
+        <div class="pill ink">Pendirian penulis</div>
+        <div style="font-size:40px;font-weight:800;margin-top:14px"><span style="color:var(--blue)">Bela bangsa</span> ≠ <span style="color:var(--orange)">perkauman</span></div>
+      </div>
+      <div id="source" class="el center" style="width:900px;font-size:30px;line-height:1.35;color:var(--ink2)">
+        Tulisan: <b style="color:var(--ink)">Abdul Hadi Awang</b><br>
+        Tarikh tertera: 26 Rabi‘ al-Akhir 1448 / 8 Oktober 2026
+      </div>
+
+      <!-- Babak 2 -->
+      <div id="s2lead" class="el lead">Kasih kepada keluarga dan bangsa<br>ialah <em>sifat manusia</em></div>
+      <div id="kasih" class="el center" style="width:900px">
+        <div class="pill ink">Pandangan penulis</div>
+        <div style="font-size:60px;font-weight:800;margin-top:14px;letter-spacing:.03em">KASIH ≠ BENCI</div>
+      </div>
+
+      <!-- Babak 3 -->
+      <div id="saling" class="el big"></div>
+      <div id="ref1" class="el ref"><b>Surah al-Hujurat, ayat 13</b><i>Ringkasan rujukan dalam tulisan</i></div>
+      <div id="takwa" class="el lead" style="font-size:40px">Kemuliaan dikaitkan dengan <em>takwa</em></div>
+
+      <!-- Babak 4 -->
+      <div id="s4lead" class="el lead" style="font-size:38px"><span class="pill ink" style="font-size:22px">Tuntutan dalam tulisan</span><br><span style="display:inline-block;margin-top:14px">terhadap bukan Islam yang tidak memerangi</span></div>
+      <div id="cBaik" class="el card blue" style="width:260px;height:130px;font-size:38px">BERBUAT<br>BAIK</div>
+      <div id="cAdil" class="el card blue" style="width:260px;height:130px;font-size:38px">BERLAKU<br>ADIL</div>
+      <div id="ref2" class="el ref"><b>Surah al-Mumtahanah, ayat 8–9</b><i>Ringkasan rujukan dalam tulisan</i></div>
+
+      <!-- Babak 5 -->
+      <div id="k1" class="el card blue" style="width:290px;height:150px;font-size:36px"><small>HUJAH 1</small>Fitrah kasih</div>
+      <div id="k2" class="el card blue" style="width:290px;height:150px;font-size:36px"><small>HUJAH 2</small>Saling mengenal</div>
+      <div id="k3" class="el card blue" style="width:290px;height:150px;font-size:36px"><small>HUJAH 3</small>Baik &amp; adil</div>
+      <div id="stance" class="el stance">
+        <div class="band">PENDIRIAN PENULIS</div>
+        <div class="body">Mempertahankan Melayu Islam tidak wajar terus dilabel perkauman.</div>
+        <div class="foot">Dilaporkan daripada tulisan, bukan disahkan oleh video ini.</div>
+      </div>
+
+      <!-- Babak 6 -->
+      <div id="n1" class="el card blue" style="width:290px;height:150px;font-size:38px">HUJAH<br>AGAMA</div>
+      <div id="n2" class="el card orange" style="width:290px;height:150px;font-size:38px">DAKWAAN<br>SEJARAH</div>
+      <div id="n3" class="el card orange" style="width:290px;height:150px;font-size:38px">TUDUHAN<br>POLITIK</div>
+      <div id="n1note" class="el center" style="width:290px;font-size:24px;color:var(--ink2);line-height:1.25">Merujuk ayat<br>al-Quran</div>
+      <div id="t2" class="el pill orange" style="font-size:21px">Perlu semakan<br>sumber</div>
+      <div id="t3" class="el pill orange" style="font-size:21px">Perlu semakan<br>sumber</div>
+      <div id="s6note" class="el muted">Video ini tidak menyemak kesahihan<br>dakwaan tersebut.</div>
+
+      <!-- Babak 7 -->
+      <div id="hypo" class="el hypo">
+        <div class="band">CONTOH HIPOTESIS</div>
+        <div class="body" id="hypoBody">Memperjuangkan bantuan kepada komuniti yang memerlukan</div>
+      </div>
+      <div id="r1" class="el row"><div class="n">1</div><div class="q">Adakah alasannya jelas?</div></div>
+      <div id="r2" class="el row"><div class="n">2</div><div class="q">Adakah pelaksanaannya adil?</div></div>
+      <div id="r3" class="el row"><div class="n">3</div><div class="q">Adakah hak orang lain dipelihara?</div></div>
+
+      <!-- Babak 8 -->
+      <div id="sumTag" class="el center" style="width:900px">
+        <div class="pill ink">Pendirian penulis</div>
+        <div style="font-size:36px;font-weight:700;margin-top:12px;color:var(--ink2)">Penulis membezakan</div>
+      </div>
+      <div id="chipA" class="el chip blue">KASIH KEPADA BANGSA</div>
+      <div id="neq" class="el" style="font-size:72px;font-weight:800;line-height:1">≠</div>
+      <div id="chipB" class="el chip orange">FANATIK PERKAUMAN</div>
+      <div id="checkH" class="el muted" style="font-size:34px">Untuk menilai hujah, periksa:</div>
+      <div id="w1" class="el word">TINDAKAN</div>
+      <div id="d1" class="el word" style="color:var(--ink2)">·</div>
+      <div id="w2" class="el word">BUKTI</div>
+      <div id="d2" class="el word" style="color:var(--ink2)">·</div>
+      <div id="w3" class="el word">KEADILAN</div>
+      <div id="note" class="el note">Ringkasan terpilih.<br>Baca tulisan penuh untuk konteks.</div>
+
+      <div id="sub"><div id="subText"></div></div>
+      <div id="safe"></div>
+    </div>
+  </div>
+
+  <aside class="panel" aria-label="Kawalan pratonton">
+    <h1>Bela Bangsa: Di Mana Batasnya?</h1>
+    <p>Prototaip motion graphic · 9:16 (1080×1920) · 80 saat · satu garis masa induk.</p>
+    <div class="warn" id="audioWarn">Pratonton ini <b>belum mengandungi suara latar</b>. Sari kata menunjukkan pemasaan yang dicadangkan untuk rakaman.</div>
+    <div class="btns">
+      <button id="btnPlay" class="primary">▶ Main</button>
+      <button id="btnRestart">⟲ Mula semula</button>
+    </div>
+    <div>
+      <input id="scrub" type="range" min="0" max="80" step="0.01" value="0" aria-label="Peluncur masa">
+      <div class="time"><span id="tNow">00:00.0</span><span>01:20.0</span></div>
+    </div>
+    <div class="jump" id="jump"></div>
+    <div class="toggles">
+      <label><input type="checkbox" id="optSafe"> Margin selamat</label>
+      <label><input type="checkbox" id="optSubs" checked> Sari kata</label>
+    </div>
+    <div class="btns">
+      <button id="btnSrt">Muat turun SRT</button>
+      <label class="filebtn">Muat suara latar…<input type="file" id="audioFile" accept="audio/*"></label>
+    </div>
+    <details>
+      <summary>Pemasaan suara latar (VO)</summary>
+      <table id="cueTable"></table>
+    </details>
+    <p>Kekunci: Space main/jeda · ←/→ ±1 s · Home mula semula.</p>
+  </aside>
+</div>
+
+<script>
+(() => {
+"use strict";
+const DUR = 80;
+const EXPORT = new URLSearchParams(location.search).has("export");
+if (EXPORT) document.documentElement.classList.add("export");
+
+/* ---------- Sari kata / suara latar (sumber tunggal pemasaan) ---------- */
+const CUES = [
+  [0.4, 3.6, "Apabila seseorang membela bangsanya, adakah itu perkauman?"],
+  [3.8, 6.6, "Tulisan Abdul Hadi Awang ini menolak penyamaan tersebut."],
+  [6.8, 9.6, "Mari lihat bagaimana hujahnya dibina."],
+  [10.4, 14.6, "Hujah pertamanya: kasih kepada keluarga dan bangsa ialah sifat manusia."],
+  [14.8, 19.6, "Pada pandangan penulis, kasih itu sendiri tidak bermaksud membenci kaum lain."],
+  [20.4, 23.4, "Penulis merujuk Surah al-Hujurat, ayat 13,"],
+  [23.5, 26.8, "tentang manusia berbangsa dan bersuku untuk saling mengenal."],
+  [27.0, 29.6, "Kemuliaan dikaitkan dengan takwa."],
+  [30.4, 33.6, "Beliau turut menekankan tuntutan berbuat baik dan berlaku adil"],
+  [33.7, 36.6, "terhadap bukan Islam yang tidak memerangi,"],
+  [36.7, 39.6, "melalui rujukan Surah al-Mumtahanah."],
+  [40.4, 43.0, "Daripada prinsip itu, penulis berhujah bahawa"],
+  [43.1, 46.6, "mempertahankan Melayu Islam tidak wajar terus dilabel perkauman."],
+  [46.8, 49.6, "Itulah pendirian utama tulisan ini."],
+  [50.4, 54.6, "Namun, tulisan ini juga mengemukakan dakwaan sejarah dan tuduhan politik semasa."],
+  [54.8, 59.6, "Dakwaan tersebut memerlukan sumber serta konteks tambahan untuk dinilai."],
+  [60.4, 62.4, "Contoh untuk menguji prinsipnya:"],
+  [62.5, 65.2, "memperjuangkan bantuan kepada komuniti yang memerlukan."],
+  [65.3, 69.6, "Adakah alasannya jelas, pelaksanaannya adil dan hak orang lain dipelihara?"],
+  [70.4, 74.4, "Ringkasnya, penulis membezakan kasih kepada bangsa daripada fanatik perkauman."],
+  [74.6, 78.6, "Untuk menilai hujah itu, periksa tindakan, bukti dan layanan terhadap orang lain."],
+];
+const CHAPTERS = ["Soalan", "Hujah 1 · Fitrah kasih", "Hujah 2 · Saling mengenal", "Hujah 3 · Baik & adil",
+  "Pendirian penulis", "Apa yang perlu disemak", "Menguji prinsip", "Ringkasan"];
+
+/* ---------- Utiliti ---------- */
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const p = (t, a, b) => clamp((t - a) / (b - a));
+const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const back = x => x <= 0 ? 0 : x >= 1 ? 1 : 1 + 2.2 * Math.pow(x - 1, 3) + 1.2 * Math.pow(x - 1, 2);
+const E = (t, a, b) => ease(p(t, a, b));
+const B = (t, a, b) => back(p(t, a, b));
+const fmt = s => { const m = Math.floor(s / 60), r = s - m * 60; return String(m).padStart(2, "0") + ":" + r.toFixed(1).padStart(4, "0"); };
+
+const cache = new Map();
+function place(id, x, y, o = 1, s = 1, rot = 0) {
+  const el = typeof id === "string" ? $(id) : id;
+  o = clamp(o);
+  const key = `${x.toFixed(1)}|${y.toFixed(1)}|${o.toFixed(3)}|${s.toFixed(3)}|${rot.toFixed(2)}`;
+  if (cache.get(el) === key) return;
+  cache.set(el, key);
+  el.style.opacity = o;
+  el.style.visibility = o < .002 ? "hidden" : "visible";
+  el.style.transform = `translate(${x}px,${y}px) translate(-50%,-50%) scale(${s}) rotate(${rot}deg)`;
+}
+function attr(el, o) { for (const k in o) el.setAttribute(k, o[k]); }
+function draw(id, k, o = 1) {
+  const el = $(id); if (!el._len) el._len = el.getTotalLength();
+  el.style.strokeDasharray = el._len;
+  el.style.strokeDashoffset = el._len * (1 - k);
+  el.setAttribute("opacity", k <= 0 ? 0 : clamp(o));
+}
+
+/* ---------- Komuniti: titik keluarga + cincin komuniti (semua seragam, warna neutral) ---------- */
+const NS = "http://www.w3.org/2000/svg";
+function mk(tag, a, parent) { const e = document.createElementNS(NS, tag); attr(e, a); parent.appendChild(e); return e; }
+function makeCommunity() {
+  const g = mk("g", { opacity: 0 }, $("communities"));
+  const ring = mk("circle", { r: 64, fill: "none", stroke: "#5E5A52", "stroke-width": 3, "stroke-dasharray": "10 10" }, g);
+  const fam = [], rim = [];
+  for (let k = 0; k < 4; k++) fam.push(mk("circle", { r: 14, fill: "#2A2A2A" }, g));
+  for (let j = 0; j < 8; j++) rim.push(mk("circle", { r: 0, fill: "#2A2A2A" }, g));
+  const lf = mk("text", { class: "lab", y: 120 }, g); lf.textContent = "KELUARGA";
+  const lc = mk("text", { class: "lab", y: 190 }, g); lc.textContent = "KOMUNITI";
+  return { g, ring, fam, rim, lf, lc };
+}
+function setCommunity(c, x, y, s, o, f, grow, rp) {
+  attr(c.g, { transform: `translate(${x},${y}) scale(${s})`, opacity: clamp(o) });
+  const R = lerp(64, 136, grow);
+  attr(c.ring, { r: R, opacity: f });
+  c.fam.forEach((d, k) => {
+    const a = (45 + 90 * k) * Math.PI / 180, r = 36 * f;
+    attr(d, { cx: Math.cos(a) * r, cy: Math.sin(a) * r, r: 14 - f * 1.5 });
+  });
+  c.rim.forEach((d, j) => {
+    const a = (22.5 + 45 * j) * Math.PI / 180, k = rp[j], r = lerp(60, 100, k);
+    attr(d, { cx: Math.cos(a) * r, cy: Math.sin(a) * r, r: 12.5 * k, opacity: k });
+  });
+  attr(c.lf, { y: R + 46, opacity: f * (1 - grow) });
+  attr(c.lc, { y: R + 46, opacity: grow });
+}
+const comA = makeCommunity(), comB = makeCommunity(), comC = makeCommunity();
+const FULL = Array(8).fill(1);
+
+/* Huruf "SALING MENGENAL" untuk kinetic typography */
+const salingLetters = [...("SALING MENGENAL")].map(ch => {
+  const s = document.createElement("span"); s.textContent = ch === " " ? " " : ch; $("saling").appendChild(s); return s;
+});
+
+/* Susun atur "TINDAKAN · BUKTI · KEADILAN" berdasarkan lebar sebenar teks */
+const wx = [245, 540, 835], dx = [392, 688];
+function layoutWords() {
+  const w = ["w1", "w2", "w3"].map(id => $(id).offsetWidth), d = $("d1").offsetWidth, g = 26;
+  const total = w[0] + w[1] + w[2] + 2 * d + 4 * g;
+  let x = 540 - total / 2;
+  wx[0] = x + w[0] / 2; x += w[0] + g; dx[0] = x + d / 2; x += d + g;
+  wx[1] = x + w[1] / 2; x += w[1] + g; dx[1] = x + d / 2; x += d + g;
+  wx[2] = x + w[2] / 2;
+}
+layoutWords();
+
+/* ---------- RENDER: keadaan visual ditentukan sepenuhnya oleh t ---------- */
+let lastCue = -1, lastChap = -1;
+function render(t) {
+  t = clamp(t, 0, DUR);
+
+  /* Tajuk & bab (kekal) */
+  const ti = E(t, .1, .9), tk = E(t, 9.2, 10.2);
+  place("title", 540, lerp(360, 128, tk) + (1 - ti) * 30, ti, lerp(1, .42, tk));
+  const ci = clamp(Math.floor(t / 10), 0, 7), ca = ci * 10;
+  if (ci !== lastChap) { $("chapter").textContent = CHAPTERS[ci]; lastChap = ci; }
+  const chO = ci === 0 ? 0 : Math.min(E(t, ca + .15, ca + .7), ci === 7 ? 1 : 1 - E(t, ca + 9.7, ca + 10));
+  place("chapter", 540, 214, chO);
+
+  /* ===== Babak 1 (0–10): BELA BANGSA ? PERKAUMAN ===== */
+  const s1out = E(t, 9.0, 10.0);
+  place("cardA", lerp(-220, 290, E(t, 1.0, 2.0)) + 160 * s1out, 820, E(t, 1.0, 1.5) * (1 - s1out), 1 - .3 * s1out);
+  place("cardB", lerp(1300, 790, E(t, 1.4, 2.4)) - 160 * s1out, 820, E(t, 1.4, 1.9) * (1 - s1out), 1 - .3 * s1out);
+  const qp = B(t, 2.4, 3.1);
+  attr($("qc"), { r: lerp(56 * qp, 14, E(t, 9.2, 9.9)), opacity: (qp > 0 ? 1 : 0) * (1 - E(t, 9.7, 10.0)) });
+  attr($("qt"), { opacity: p(t, 2.6, 3.0) * (1 - E(t, 9.0, 9.4)), transform: `translate(540 820) scale(${Math.max(qp, .001)}) translate(-540 -820)` });
+  const s1fade = 1 - E(t, 8.8, 9.6);
+  place("s1stance", 540, 1010 + 20 * (1 - E(t, 4.2, 5.0)), E(t, 4.2, 5.0) * s1fade);
+  place("source", 540, 1200, E(t, 3.4, 4.2) * s1fade);
+
+  /* ===== Babak 2 (10–20): titik → keluarga → komuniti; komuniti lain setara ===== */
+  const comOut = E(t, 29.0, 30.0);
+  const f = E(t, 10.4, 11.8), grow = E(t, 12.6, 13.8);
+  const rp = FULL.map((_, j) => E(t, 12.6 + j * .1, 13.3 + j * .1));
+  const shrink = lerp(1, .82, E(t, 15.0, 16.4));
+  setCommunity(comB, 540, 820, shrink * lerp(1, .6, comOut), (t < 9.6 ? 0 : E(t, 9.6, 9.95)) * (1 - comOut), f, grow, rp);
+  const side = E(t, 15.0, 16.4);
+  setCommunity(comA, lerp(200, 330, comOut), 820, .82 * lerp(.55, 1, side) * lerp(1, .6, comOut), side * (1 - comOut), 1, 1, FULL);
+  setCommunity(comC, lerp(880, 750, comOut), 820, .82 * lerp(.55, 1, side) * lerp(1, .6, comOut), side * (1 - comOut), 1, 1, FULL);
+  place("s2lead", 540, 470 + 20 * (1 - E(t, 10.8, 11.6)), E(t, 10.8, 11.6) * (1 - E(t, 19.4, 20.2)));
+  place("kasih", 540, 1170 + 20 * (1 - E(t, 15.6, 16.4)), E(t, 15.6, 16.4) * (1 - E(t, 19.4, 20.2)));
+
+  /* ===== Babak 3 (20–30): SALING MENGENAL ===== */
+  const s3out = 1 - E(t, 29.2, 30.0);
+  const salO = (t > 20.6 ? 1 : 0) * s3out;
+  place("saling", 540, 470, salO, lerp(1, .9, 1 - s3out));
+  salingLetters.forEach((s, i) => {
+    const k = E(t, 20.8 + i * .05, 21.3 + i * .05);
+    s.style.opacity = k; s.style.transform = `translateY(${(1 - k) * 40}px)`;
+  });
+  const beamIn = E(t, 29.2, 30.4);
+  draw("lAB", E(t, 21.0, 22.0), 1 - beamIn);
+  draw("lBC", E(t, 21.5, 22.5), 1 - beamIn);
+  draw("lAC", E(t, 22.3, 23.8), 1 - E(t, 28.8, 29.6));
+  place("ref1", 540, 1110, E(t, 21.0, 21.8) * s3out);
+  place("takwa", 540, 1270, E(t, 27.0, 27.8) * s3out);
+
+  /* ===== Babak 4 (30–40): neraca ===== */
+  const bOut = 1 - E(t, 39.0, 40.0);
+  const wob = t0 => t > t0 ? 1.6 * Math.exp(-2.4 * (t - t0)) * Math.sin(9 * (t - t0)) : 0;
+  const th = (-5 * E(t, 32.1, 32.7) + 5 * E(t, 33.3, 33.9) - wob(32.5) + wob(33.7)) * Math.PI / 180;
+  const L = 300, px = 540, py = 766;
+  const fl = [px - L * Math.cos(th), py - L * Math.sin(th)], fr = [px + L * Math.cos(th), py + L * Math.sin(th)];
+  const lx1 = lerp(312, fl[0], beamIn), ly1 = lerp(820, fl[1], beamIn), lx2 = lerp(768, fr[0], beamIn), ly2 = lerp(820, fr[1], beamIn);
+  attr($("beam"), { x1: lx1, y1: ly1, x2: lx2, y2: ly2, opacity: (beamIn > 0 ? 1 : 0) * bOut });
+  draw("bPillar", E(t, 30.0, 31.0), bOut);
+  attr($("bPivot"), { opacity: E(t, 30.4, 30.9) * bOut });
+  const baseK = E(t, 30.0, 30.8);
+  attr($("bBase"), { opacity: baseK * bOut, transform: `translate(540 0) scale(${Math.max(baseK, .001)} 1) translate(-540 0)` });
+  const hang = ([x, y]) => `M${x},${y} L${x - 120},${y + 250} M${x},${y} L${x + 120},${y + 250}`;
+  const pan = ([x, y]) => `M${x - 130},${y + 250} Q${x},${y + 300} ${x + 130},${y + 250}`;
+  attr($("bStrings"), { d: hang(fl) + hang(fr), opacity: E(t, 30.6, 31.4) * bOut });
+  attr($("bPans"), { d: pan(fl) + pan(fr), opacity: E(t, 30.6, 31.4) * bOut });
+  const toS5 = E(t, 39.4, 40.4);
+  const dl = E(t, 31.6, 32.3), dr = E(t, 32.8, 33.5);
+  place("cBaik", lerp(fl[0], 860, toS5), lerp(fl[1] + 190 - 220 * (1 - dl), 640, toS5), p(t, 31.6, 32.0) * (1 - toS5), lerp(1, .55, toS5));
+  place("cAdil", lerp(fr[0], 860, toS5), lerp(fr[1] + 190 - 220 * (1 - dr), 640, toS5), p(t, 32.8, 33.2) * (1 - toS5), lerp(1, .55, toS5));
+  place("s4lead", 540, 455, E(t, 33.7, 34.5) * (1 - E(t, 39.2, 40.0)));
+  place("ref2", 540, 1300, E(t, 36.7, 37.5) * (1 - E(t, 39.2, 40.0)));
+
+  /* ===== Babak 5 (40–50): tiga hujah bergabung → PENDIRIAN PENULIS ===== */
+  const m = E(t, 43.2, 44.4);
+  const kx = [220, 540, 860], kin = [E(t, 40.3, 41.0), E(t, 40.6, 41.3), E(t, 40.0, 40.7)];
+  ["k1", "k2", "k3"].forEach((id, i) => {
+    const yIn = i === 2 ? 640 : lerp(580, 640, kin[i]);
+    const sIn = i === 2 ? lerp(.8, 1, kin[i]) : 1;
+    place(id, lerp(kx[i], 540, m), lerp(yIn, 920, m), kin[i] * (1 - m), sIn * lerp(1, .5, m));
+  });
+  const cvOut = 1 - E(t, 43.2, 43.9);
+  draw("cv1", E(t, 41.6, 42.6), cvOut); draw("cv2", E(t, 41.8, 42.6), cvOut); draw("cv3", E(t, 41.6, 42.6), cvOut);
+  const stIn = E(t, 43.9, 44.9), stOut = E(t, 49.2, 50.2);
+  place("stance", 540, lerp(1000, 560, stOut), stIn * (1 - stOut), lerp(.85, 1, stIn) * lerp(1, .2, stOut));
+
+  /* ===== Babak 6 (50–60): dokumen bercabang ===== */
+  const s6out = 1 - E(t, 59.0, 59.8);
+  const dIn = E(t, 49.7, 50.4);
+  attr($("doc"), { transform: `translate(540 560) scale(${lerp(.6, 1, dIn)})`, opacity: dIn * s6out });
+  draw("br1", E(t, 50.6, 51.4), s6out); draw("br2", E(t, 50.8, 51.6), s6out); draw("br3", E(t, 51.0, 51.8), s6out);
+  const nIn = [E(t, 51.2, 51.8), E(t, 52.4, 53.0), E(t, 53.4, 54.0)];
+  ["n1", "n2", "n3"].forEach((id, i) => place(id, kx[i], 960 + 24 * (1 - nIn[i]), nIn[i] * s6out));
+  place("n1note", 220, 1088, E(t, 52.0, 52.6) * s6out);
+  const m2 = B(t, 55.2, 55.8), m3 = B(t, 55.8, 56.4), mFly = E(t, 59.0, 60.2);
+  attr($("mg2"), { transform: `translate(${540 + 125} 892) scale(${Math.max(m2, .001)})`, opacity: (m2 > 0 ? 1 : 0) * s6out });
+  attr($("mg3"), {
+    transform: `translate(${lerp(985, 540, mFly)} ${lerp(892, 560, mFly)}) scale(${Math.max(m3, .001) * lerp(1, 3.2, mFly)})`,
+    opacity: (m3 > 0 ? 1 : 0) * (1 - E(t, 59.9, 60.5))
+  });
+  place("t2", 540, 1100, E(t, 55.6, 56.2) * s6out);
+  place("t3", 860, 1100, E(t, 56.2, 56.8) * s6out);
+  place("s6note", 540, 1270, E(t, 57.0, 57.8) * s6out);
+
+  /* ===== Babak 7 (60–70): CONTOH HIPOTESIS ===== */
+  const s7out = 1 - E(t, 69.2, 70.0);
+  const hIn = E(t, 60.0, 60.8);
+  place("hypo", 540, 560, hIn * s7out, lerp(.9, 1, hIn));
+  $("hypoBody").style.opacity = E(t, 62.3, 63.0);
+  const ry = [860, 990, 1120], rIn = [E(t, 65.3, 65.9), E(t, 66.6, 67.2), E(t, 67.9, 68.5)];
+  ["r1", "r2", "r3"].forEach((id, i) => place(id, 540 + 40 * (1 - rIn[i]), ry[i], rIn[i] * s7out));
+
+  /* Kotak semak (kosong — tiada jawapan diberikan) → garis bawah perkataan babak 8 */
+  ["cb1", "cb2", "cb3"].forEach((id, i) => {
+    const park = E(t, 69.3 + i * .1, 70.3 + i * .1), bar = E(t, 75.0 + i * .6, 75.7 + i * .6);
+    const cx = lerp(lerp(930 + 40 * (1 - rIn[i]), wx[i], park), wx[i], bar);
+    const cy = lerp(lerp(ry[i], 1112, park), 1104, bar);
+    let w = lerp(lerp(52, 24, park), 150, bar), h = lerp(lerp(52, 24, park), 8, bar);
+    const o = rIn[i] * lerp(lerp(1, .35, park), 1, bar);
+    attr($(id), { x: cx - w / 2, y: cy - h / 2, width: w, height: h, opacity: o, "fill-opacity": bar,
+      "stroke-width": lerp(4, 0, bar) });
+  });
+
+  /* ===== Babak 8 (70–80): ringkasan ===== */
+  place("sumTag", 540, 470, E(t, 70.4, 71.2));
+  place("chipA", 540, 600 + 20 * (1 - E(t, 70.9, 71.6)), E(t, 70.9, 71.6));
+  place("neq", 540, 702, E(t, 71.6, 72.2), lerp(.6, 1, B(t, 71.6, 72.2)));
+  place("chipB", 540, 804 + 20 * (1 - E(t, 72.2, 72.9)), E(t, 72.2, 72.9));
+  place("checkH", 540, 965, E(t, 74.6, 75.2));
+  ["w1", "w2", "w3"].forEach((id, i) => place(id, wx[i], 1058 + 18 * (1 - E(t, 75.0 + i * .6, 75.6 + i * .6)), E(t, 75.0 + i * .6, 75.6 + i * .6)));
+  place("d1", dx[0], 1058, E(t, 75.4, 75.8));
+  place("d2", dx[1], 1058, E(t, 76.0, 76.4));
+  place("note", 540, 1290 + 16 * (1 - E(t, 76.8, 77.6)), E(t, 76.8, 77.6));
+
+  /* Sari kata */
+  let ci2 = -1, so = 0;
+  for (let i = 0; i < CUES.length; i++) {
+    const [a, b] = CUES[i];
+    if (t >= a && t < b) { ci2 = i; so = Math.min(p(t, a, a + .15), 1 - p(t, b - .15, b)); break; }
+  }
+  const st = $("subText");
+  if (ci2 !== lastCue) { st.textContent = ci2 >= 0 ? CUES[ci2][2] : ""; lastCue = ci2; highlightCue(ci2); }
+  st.style.opacity = ci2 >= 0 ? so : 0;
+}
+
+/* ---------- Garis masa induk & kawalan ---------- */
+let T = 0, playing = false, t0 = 0, wall0 = 0;
+const audio = new Audio(); let hasAudio = false;
+const scrub = $("scrub"), btnPlay = $("btnPlay");
+function seek(t) {
+  T = clamp(t, 0, DUR);
+  if (hasAudio) try { audio.currentTime = T; } catch (e) {}
+  t0 = T; wall0 = performance.now();
+  update();
+}
+function update() { render(T); scrub.value = T; $("tNow").textContent = fmt(T); }
+function play() {
+  if (T >= DUR) seek(0);
+  playing = true; t0 = T; wall0 = performance.now();
+  if (hasAudio) { audio.currentTime = T; audio.play().catch(() => {}); }
+  btnPlay.textContent = "❚❚ Jeda"; requestAnimationFrame(tick);
+}
+function pause() { playing = false; if (hasAudio) audio.pause(); btnPlay.textContent = "▶ Main"; }
+function tick(now) {
+  if (!playing) return;
+  T = hasAudio && !audio.paused ? audio.currentTime : t0 + (now - wall0) / 1000;
+  if (T >= DUR) { T = DUR; update(); pause(); return; }
+  update(); requestAnimationFrame(tick);
+}
+btnPlay.onclick = () => playing ? pause() : play();
+$("btnRestart").onclick = () => { seek(0); if (!playing) play(); };
+scrub.addEventListener("input", () => seek(parseFloat(scrub.value)));
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT" && e.target.type !== "range") return;
+  if (e.code === "Space") { e.preventDefault(); playing ? pause() : play(); }
+  else if (e.code === "ArrowRight") { e.preventDefault(); seek(T + 1); }
+  else if (e.code === "ArrowLeft") { e.preventDefault(); seek(T - 1); }
+  else if (e.code === "Home") { e.preventDefault(); seek(0); }
+});
+CHAPTERS.forEach((c, i) => {
+  const b = document.createElement("button"); b.textContent = `${i * 10}s`; b.title = c;
+  b.onclick = () => seek(i * 10); $("jump").appendChild(b);
+});
+$("optSafe").onchange = e => $("stage").classList.toggle("show-safe", e.target.checked);
+$("optSubs").onchange = e => $("stage").classList.toggle("no-subs", !e.target.checked);
+
+/* Jadual VO */
+CUES.forEach(([a, b, s], i) => {
+  const tr = document.createElement("tr"); tr.id = "cue" + i;
+  tr.innerHTML = `<td>${fmt(a)}–${fmt(b)}</td><td></td>`; tr.lastChild.textContent = s;
+  tr.onclick = () => seek(a); $("cueTable").appendChild(tr);
+});
+function highlightCue(i) {
+  document.querySelectorAll("#cueTable tr.on").forEach(r => r.classList.remove("on"));
+  if (i >= 0) $("cue" + i).classList.add("on");
+}
+
+/* SRT */
+const srtTime = s => { const ms = Math.round(s * 1000), h = Math.floor(ms / 3600000), m = Math.floor(ms / 60000) % 60,
+  se = Math.floor(ms / 1000) % 60; return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(se).padStart(2, "0")},${String(ms % 1000).padStart(3, "0")}`; };
+$("btnSrt").onclick = () => {
+  const srt = CUES.map(([a, b, s], i) => `${i + 1}\n${srtTime(a)} --> ${srtTime(b)}\n${s}\n`).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([srt], { type: "text/plain" })); a.download = "bela-bangsa.srt"; a.click();
+};
+
+/* Suara latar pilihan (fail tempatan; menjadi jam induk ketika dimainkan) */
+$("audioFile").onchange = e => {
+  const file = e.target.files[0]; if (!file) return;
+  pause(); audio.src = URL.createObjectURL(file); hasAudio = true;
+  $("audioWarn").innerHTML = `Suara latar dimuatkan: <b></b>. Semak penyelarasan dengan sari kata.`;
+  $("audioWarn").querySelector("b").textContent = file.name;
+  audio.onended = () => pause();
+};
+
+/* Skala komposisi */
+function fit() {
+  const vp = $("viewport"), stage = $("stage");
+  let s = 1;
+  if (!EXPORT) {
+    const wide = window.innerWidth >= 900;
+    const availW = wide ? window.innerWidth - 380 - 72 : window.innerWidth - 32;
+    const availH = wide ? window.innerHeight - 32 : window.innerHeight * .78;
+    s = Math.max(.15, Math.min(availW / 1080, availH / 1920, 1));
+  }
+  vp.style.width = 1080 * s + "px"; vp.style.height = 1920 * s + "px";
+  stage.style.transform = `scale(${s})`;
+}
+window.addEventListener("resize", fit);
+fit();
+
+/* API untuk eksport bingkai demi bingkai */
+window.DURATION = DUR;
+window.renderFrame = t => { T = t; render(t); };
+window.CUES = CUES;
+seek(0);
+})();
+</script>
+</body>
+</html>
