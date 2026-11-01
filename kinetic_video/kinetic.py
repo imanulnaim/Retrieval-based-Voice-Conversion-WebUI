@@ -17,6 +17,8 @@ Script format (one item per line, times in seconds, '#' = comment):
   start end lead | KEY | tail          caption
   BROLL start end path/to/clip.mp4     B-roll covering the main shot (audio kept)
   CARD  start end lead | KEY | tail    full-screen dimmed name card
+  ZOOM  start end                      punch-in range (default: every other caption)
+  FOCUS x y                            punch-in anchor, 0..1 of the frame
 """
 import os
 import subprocess
@@ -37,6 +39,7 @@ TRACK_SMALL = -1.5
 LIBASS_EM = 1.21        # libass size = ascender+descender (Inter ~1.21 em)
 FOCUS = [0.5, 0.5]      # punch-in anchor (0..1), set with "FOCUS x y" in the script
 PUNCH = 0.12            # punch-in zoom amount
+ZOOMS = []              # explicit "ZOOM start end" punch-in ranges (else alternate captions)
 
 
 def ts(t):
@@ -60,6 +63,10 @@ def parse(path):
         if not line:
             continue
         head = line.split()[0].upper()
+        if head == "ZOOM":
+            _, a, b = line.split()
+            ZOOMS.append((float(a), float(b)))
+            continue
         if head == "FOCUS":
             _, fx, fy = line.split()
             FOCUS[:] = [float(fx), float(fy)]
@@ -144,7 +151,8 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
 def zoom_expr(caps):
     # jump-cut punch-in: every other caption line is pushed in (PUNCH) toward FOCUS
-    terms = [f"between(t,{a:.3f},{b:.3f})" for i, (a, b, *_) in enumerate(caps) if i % 2 == 1]
+    ranges = ZOOMS or [(a, b) for i, (a, b, *_) in enumerate(caps) if i % 2 == 1]
+    terms = [f"between(t,{a:.3f},{b:.3f})" for a, b in ranges]
     if not terms:
         return "1"
     return f"(1+{PUNCH}*gt({'+'.join(terms)},0))"
@@ -173,7 +181,7 @@ def build(script, src, out, grade=True, zoom=True):
         post += ["eq=contrast=1.08:saturation=1.08:gamma=0.97",
                  "colorbalance=rs=-0.04:bs=0.05:rh=0.05:bh=-0.04",
                  "vignette=PI/4.6",
-                 "noise=alls=6:allf=t"]
+                 "noise=alls=4:allf=t"]
     for a, b, *_ in cards:
         post.append(f"drawbox=t=fill:c=black@0.62:enable='between(t,{a:.3f},{b:.3f})'")
     post.append(f"ass='{ass}'")
@@ -181,7 +189,7 @@ def build(script, src, out, grade=True, zoom=True):
 
     cmd = ["ffmpeg", "-y", "-v", "error", *inputs, "-filter_complex", ";".join(fc),
            "-map", "[vout]", "-map", "0:a?", "-c:v", "libx264", "-preset", "medium",
-           "-crf", "18", "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", out]
+           "-crf", "20", "-maxrate", "10M", "-bufsize", "20M", "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", out]
     subprocess.run(cmd, check=True)
     print("wrote", out)
 
